@@ -1,0 +1,12 @@
+{
+  "name": "ld-web/mvc",
+  "description": "PHP7 MVC App example",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Lucas Delobelle",
+      "email": "lucas@ld-web.net"
+    }
+  ],
+  "require": {}
+}
