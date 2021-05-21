@@ -1,5 +1,24 @@
 # Sciences-U - B3 IW - PHP7 MVC from scratch
 
+- [Introduction](#introduction)
+- [Démarrage](#démarrage-du-projet-avec-composer)
+  - [Mise à jour de Composer](#mise-à-jour-de-composer)
+  - [Initialisation du projet](#initialisation-du-projet)
+  - [Autoloading PSR-4](#déclaration-de-lautoloading-psr-4)
+  - [Point d'entrée de l'application](#définition-dun-point-dentrée-pour-notre-application)
+- [Lancement du projet en ligne de commande](#premier-lancement-du-projet-en-ligne-de-commande)
+- [Un point sur MVC](#point-théorique-rapide-sur-le-modèle-mvc)
+  - [Modèle](#modèle)
+  - [Vue](#vue)
+  - [Contrôleur](#contrôleur)
+- [Le modèle](#le-modèle)
+  - [Création de la base de données](#création-de-la-base-de-données)
+  - [Installation de Doctrine](#installation-de-doctrine)
+  - [Configuration de Doctrine](#configuration-de-doctrine)
+  - [Création d'une entité](#création-dune-première-entité)
+  - [Insertion d'un enregistrement](#insertion-dun-enregistrement-en-base-de-données)
+  - [Le problème des assets](#le-problème-des-assets-fichiers-statiques)
+
 ## Introduction
 
 Ce module vise à créer une application PHP adoptant une architecture MVC.
