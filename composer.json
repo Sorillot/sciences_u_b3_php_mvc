@@ -1,0 +1,16 @@
+{
+    "name": "lucas-montant/mvc",
+    "description": "php7 mvc",
+    "type": "project",
+    "scripts": {
+        "start" : "php -S localhost:8000 -t public/ public/index.php"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\" : "src/"
+        }
+    },
+    "require": {
+        "doctrine/orm": "^2.8"
+    }
+}
