@@ -54,7 +54,7 @@ Afin d'organiser la structure de notre projet, nous allons déclarer, dans notre
 
 Ainsi, nous allons renseigner la propriété `autoloading` de notre objet de configuration :
 
-```json
+```javascript
 {
   //...
   "autoload": {
@@ -136,7 +136,7 @@ Enfin, pour éviter d'avoir à utiliser cette commande à chaque fois, on peut d
 
 > Fichier : `composer.json`
 
-```json
+```javascript
 {
   //...
   "scripts": {
@@ -150,7 +150,7 @@ On pourra ensuite facilement lancer le serveur depuis un terminal avec `composer
 
 **Note** : Il faut également ajouter la désactivation du timeout Composer dans le fichier, sinon par défaut la commande va s'interrompre au bout de 5 minutes :
 
-```json
+```javascript
 {
   //...
   "config": {
