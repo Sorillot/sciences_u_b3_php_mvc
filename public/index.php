@@ -11,18 +11,22 @@ if (php_sapi_name() !== 'cli' && preg_match('/\.(?:png|jpg|jpeg|gif|ico)$/', $_S
 use App\Entity\User;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Dotenv\Dotenv;
+
+$dotenv = new Dotenv();
+$dotenv->loadEnv(__DIR__ . '/../.env');
 
 // Indique à Doctrine dans quel dossier aller chercher & analyser les entités
 $paths = [__DIR__ . '/../src/Entity'];
-$isDevMode = true;
+$isDevMode = ($_ENV['APP_ENV'] === 'dev');
 
 $dbParams = [
-  'driver'   => 'pdo_mysql',
-  'host'     => 'localhost',
-  'port'     => '3640',
-  'user'     => 'root',
-  'password' => 'mysqltests',
-  'dbname'   => 'php_mvc'
+  'driver'   => $_ENV['DB_DRIVER'],
+  'host'     => $_ENV['DB_HOST'],
+  'port'     => $_ENV['DB_PORT'],
+  'user'     => $_ENV['DB_USER'],
+  'password' => $_ENV['DB_PASSWORD'],
+  'dbname'   => $_ENV['DB_DBNAME']
 ];
 
 $config = Setup::createAnnotationMetadataConfiguration(
