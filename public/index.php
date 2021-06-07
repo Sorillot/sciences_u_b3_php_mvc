@@ -4,6 +4,7 @@
 require_once __DIR__.'/../vendor/autoload.php';
 
 //appel des classes avec "use" en indiquant leur FQCN
+use App\Entity\User;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
@@ -29,5 +30,9 @@ $config = Setup::createAnnotationMetadataConfiguration(
 
 $entityManager = EntityManager::create($dbParams,$config);
 
-var_dump($entityManager);
+$user = new User();
+$user->setName('Bob');
+$entityManager->persist($user);
+$entityManager->flush();
+
 ?>
