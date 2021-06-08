@@ -9,7 +9,6 @@ if (php_sapi_name() !== 'cli' && preg_match('/\.(?:png|jpg|jpeg|gif|ico)$/', $_S
 }
 
 use App\Controller\HomeController;
-use App\Entity\User;
 use App\Router;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
