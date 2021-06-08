@@ -46,8 +46,15 @@ $router->addPath(
   '/',
   'GET',
   'home',
-  HomeController::class . "::index",
+  HomeController::class,
   'index'
+);
+$router->addPath(
+  '/contact',
+  'GET',
+  'contact',
+  HomeController::class,
+  'contact'
 );
 
 $router->execute($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
