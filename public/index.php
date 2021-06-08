@@ -8,7 +8,9 @@ if (php_sapi_name() !== 'cli' && preg_match('/\.(?:png|jpg|jpeg|gif|ico)$/', $_S
   return false;
 }
 
+use App\Controller\HomeController;
 use App\Entity\User;
+use App\Router;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Dotenv\Dotenv;
@@ -39,13 +41,13 @@ $config = Setup::createAnnotationMetadataConfiguration(
 
 $entityManager = EntityManager::create($dbParams, $config);
 
-$user = new User();
-$user->setName("Bob");
+$router = new Router($entityManager);
+$router->addPath(
+  '/',
+  'GET',
+  'home',
+  HomeController::class . "::index",
+  'index'
+);
 
-// Persist permet uniquement de dire au gestionnaire d'entités de gérer l'entité passée en paramètre
-// Persist ne déclenche pas automatiquement une insertion
-$entityManager->persist($user);
-// Pour déclencher l'insertion, on doit appeler la méthode "flush" sur le gestionnaire d'entités
-$entityManager->flush();
-
-var_dump($user);
+$router->execute($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
