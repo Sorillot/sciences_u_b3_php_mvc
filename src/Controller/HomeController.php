@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Twig\Environment;
 
 class HomeController
 {
@@ -22,8 +23,8 @@ class HomeController
     var_dump($user);
   }
 
-  public function contact()
+  public function contact(Environment $twig)
   {
-    echo "Contact";
+    echo $twig->render('contact.html.twig', ['title' => 'Contact']);
   }
 }

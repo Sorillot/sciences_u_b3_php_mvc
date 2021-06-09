@@ -4,15 +4,17 @@ namespace App;
 
 use Doctrine\ORM\EntityManager;
 use ReflectionMethod;
+use Twig\Environment;
 
 class Router
 {
   private $paths = [];
   private $params = [];
 
-  public function __construct(EntityManager $em)
+  public function __construct(EntityManager $em, Environment $twig)
   {
     $this->params[EntityManager::class] = $em;
+    $this->params[Environment::class] = $twig;
   }
 
   public function addPath(string $path, string $httpMethod, string $name, string $class, string $method)
