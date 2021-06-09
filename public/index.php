@@ -13,10 +13,14 @@ use App\Router;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Dotenv\Dotenv;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
+// Configuration, variables d'environnement
 $dotenv = new Dotenv();
 $dotenv->loadEnv(__DIR__ . '/../.env');
 
+// Doctrine
 // Indique à Doctrine dans quel dossier aller chercher & analyser les entités
 $paths = [__DIR__ . '/../src/Entity'];
 $isDevMode = ($_ENV['APP_ENV'] === 'dev');
@@ -40,7 +44,14 @@ $config = Setup::createAnnotationMetadataConfiguration(
 
 $entityManager = EntityManager::create($dbParams, $config);
 
-$router = new Router($entityManager);
+// Twig
+$loader = new FilesystemLoader(__DIR__ . '/../templates');
+$twig = new Environment($loader, [
+  'debug' => ($_ENV['APP_ENV'] === 'dev'),
+  'cache' => __DIR__ . '/../var/twig',
+]);
+
+$router = new Router($entityManager, $twig);
 $router->addPath(
   '/',
   'GET',
