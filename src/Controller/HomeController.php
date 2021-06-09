@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
 
-class HomeController
+class HomeController extends AbstractController
 {
   // Ici, j'ai une dépendance envers l'entity manager
   public function index(EntityManager $em)
@@ -19,7 +19,7 @@ class HomeController
     // Pour déclencher l'insertion, on doit appeler la méthode "flush" sur le gestionnaire d'entités
     $em->flush();
 
-    var_dump($user);
+    $this->render(__DIR__ . '/../../templates/index.php', ['user' => $user]);
   }
 
   public function contact()
