@@ -9,7 +9,7 @@ use Twig\Environment;
 class HomeController
 {
   // Ici, j'ai une dépendance envers l'entity manager
-  public function index(EntityManager $em)
+  public function index(EntityManager $em, Environment $twig)
   {
     $user = new User();
     $user->setName("Bob");
@@ -20,7 +20,7 @@ class HomeController
     // Pour déclencher l'insertion, on doit appeler la méthode "flush" sur le gestionnaire d'entités
     $em->flush();
 
-    var_dump($user);
+    echo $twig->render('index.html.twig', ['user' => $user]);
   }
 
   public function contact(Environment $twig)
