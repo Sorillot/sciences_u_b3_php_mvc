@@ -9,12 +9,14 @@ use Twig\Environment;
 class Router
 {
   private $paths = [];
+  // Paramètres injectables dans les méthodes de contrôleurs
   private $params = [];
+  private $twigInstance;
 
   public function __construct(EntityManager $em, Environment $twig)
   {
     $this->params[EntityManager::class] = $em;
-    $this->params[Environment::class] = $twig;
+    $this->twigInstance = $twig;
   }
 
   public function addPath(string $path, string $httpMethod, string $name, string $class, string $method)
@@ -57,7 +59,7 @@ class Router
       }
 
       // Instanciation du contrôleur
-      $controller = new $className();
+      $controller = new $className($this->twigInstance);
 
       // Appel de la méthode adéquate, avec le(s) paramètre(s) adéquat(s), ou aucun paramètre
       call_user_func_array(
