@@ -18,6 +18,15 @@
   - [Création d'une entité](#création-dune-première-entité)
   - [Insertion d'un enregistrement](#insertion-dun-enregistrement-en-base-de-données)
   - [Le problème des assets](#le-problème-des-assets-fichiers-statiques)
+- [Configuration](#configuration)
+  - [Les fichiers .env](#les-fichiers-env)
+- [Les contrôleurs et le routage des requêtes](#les-contrôleurs-et-le-routage-des-requêtes)
+  - [Contrôleurs](#contrôleurs)
+  - [Routeur](#routeur)
+  - [Les dépendances des contrôleurs](#les-dépendances-des-contrôleurs)
+    - [La Réflexion](#la-réflexion)
+- [La vue](#la-vue)
+- [Conclusion](#conclusion)
 
 ## Introduction
 
@@ -324,7 +333,7 @@ Ensuite, si quelqu'un d'autre clône ce dépôt, alors soit on sera obligé de s
 
 Nous avons donc besoin d'externaliser la configuration de notre application, et de pouvoir ensuite y faire référence depuis notre application.
 
-### Les fichier .env
+### Les fichiers .env
 
 Les fichiers .env permettent de stocker des paires de clés/valeurs.
 
