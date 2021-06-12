@@ -315,3 +315,131 @@ Nous devons donc filtrer les requêtes entrantes, pour pouvoir servir les élém
 Pour commencer, nous pouvons indiquer dans notre point d'entrée la chose suivante : si on vient bien d'une page web, et que l'URI demandée termine par une extension de fichier image, alors on retourne `false`. Cela permet d'envoyer directement la ressource demandée, ou bien une 404 si elle n'est pas trouvée.
 
 Voir le [commit concerné](https://github.com/ld-web/sciences_u_b3_php_mvc/commit/b010a4d71b77e443164de19209ac88a975068e69).
+
+## Configuration
+
+Nous avons un autre problème à régler : la configuration pour accéder à la base de données se trouve dans le fichier `public/index.php`, et est versionnée. Elle apparaît donc dans ce dépôt Github, en clair.
+
+Ensuite, si quelqu'un d'autre clône ce dépôt, alors soit on sera obligé de s'adapter aux paramètres déclarés dans le fichier, soit on devra changer les paramètres. Mais si on les change, alors du point de vue de Git, il y aura un changement de fichier à commiter.
+
+Nous avons donc besoin d'externaliser la configuration de notre application, et de pouvoir ensuite y faire référence depuis notre application.
+
+### Les fichier .env
+
+Les fichiers .env permettent de stocker des paires de clés/valeurs.
+
+Ensuite, on peut utiliser un package comme `symfony/dotenv` pour lire le contenu du fichier et le mapper automatiquement dans le tableau superglobal `$_ENV` de PHP.
+
+On installe donc le composant DotEnv de Symfony : `composer require symfony/dotenv`.
+
+Ensuite, on peut donc déclarer des valeurs par défaut pour nos variables, dans un fichier `.env`.
+
+Les valeurs effectivement utilisées en local, sur notre machine, peuvent quant à elle être déclarée dans un fichier `.env.local`, non versionné sur Git.
+
+> Le fichier `.env` contient donc des valeurs par défaut et sera versionné. Le fichier `.env.local`, non versionné, viendra, pour chaque environnement différent, écraser les valeurs par défaut, pour avoir la configuration adaptée à chaque machine (ou environnement). Du point de vue de l'application, on se contente donc de faire référence à la configuration, sans utiliser de valeurs explicites
+
+Commit concerné : [https://github.com/ld-web/sciences_u_b3_php_mvc/commit/58f238caea0a3640eff6bb46552d3a1f4d3e0ba3](https://github.com/ld-web/sciences_u_b3_php_mvc/commit/58f238caea0a3640eff6bb46552d3a1f4d3e0ba3)
+
+Par ailleurs, le composer DotEnv de Symfony introduit également une variable `APP_ENV`, positionnée par défaut à la valeur `dev`. Cette variable peut permettre de configurer les packages selon l'environnement dans lequel on se trouve.
+
+## Les contrôleurs et le routage des requêtes
+
+Pour le moment, notre page d'accueil crée un utilisateur et l'enregistre en BDD. Tout ça se déroule dans le fichier `public/index.php`.
+
+Mais nous préférerions pouvoir définir plusieurs endroits correspondant aux différentes "pages" de notre application.
+
+Par ailleurs, on aimerait pouvoir les définir en étant adapté à un format d'URL comme `/user/profile`, ou encore `/admin/product/edit/5`.
+
+Pour réceptionner les requêtes et les traiter, on va créer une couche de **contrôleurs**.
+
+Ensuite, pour pouvoir trouver le bon contrôleur à exécuter lors de la réception d'une requête, nous aurons besoin d'un **routeur**.
+
+### Contrôleurs
+
+Comme indiqué précédemment, un contrôleur n'agit qu'en tant que **glue** entre le modèle et la vue.
+
+On peut donc déplacer le bout de code qui crée un utilisateur dans une classe `App\Controller\HomeController` ([lien](https://github.com/ld-web/sciences_u_b3_php_mvc/commit/2c4106ff130609324bc6712c7b11b3d97199817e#diff-cf8ddd8abc8d002c914ecaae76ad52cf5fea1a58eae9d998ba252d0b804b80e6))
+
+### Routeur
+
+Dans l'index, il est donc maintenant question d'enregistrer des routes, puis de dispatcher une requête entrante auprès du routeur, afin qu'il puisse router cette requête vers le bon contrôleur, en fonction de ses routes enregistrées.
+
+La classe `Router` est donc définie dans un premier temps avec les méthodes suivantes :
+
+- `addPath` pour ajouter une route
+- `execute` pour router une requête vers la bonne route
+- `checkPath` pour vérifier qu'une route correspondant à une URL et une méthode HTTP existe ou non
+
+Dans le fichier `public/index.php`, on peut donc ajouter notre route pour la page d'accueil :
+
+```php
+$router->addPath(
+  '/',
+  'GET',
+  'home',
+  HomeController::class,
+  'index'
+);
+```
+
+### Les dépendances des contrôleurs
+
+Avec ce premier mécanisme, on peut router une requête vers un contrôleur.
+
+Mais un autre problème émerge : le contrôleur de notre page d'accueil crée un utilisateur et l'enregistre en base de données. Il consomme donc une instance de l'entity manager.
+
+Quand nous avons enregistré la référence à la méthode `index` dans notre routeur, nous avons simplement désigné la méthode avec une chaîne de caractères, sans ajouter les paramètres qu'elle attendait.
+
+Nous devons donc trouver un moyen d'**injecter** automatiquement la dépendance, donc le gestionnaire d'entités, dans notre `HomeController`, et ce au moment où nous exécutons la méthode `index`.
+
+#### La Réflexion
+
+Avec PHP, nous pouvons analyser par programmation la signature d'une méthode, le contenu d'une classe, etc...par programmation.
+
+L'idée ici va donc être d'utiliser la réflexion, afin d'identifier les paramètres présents dans un contrôleur, et pouvoir injecter les paramètres attendus lors de son exécution.
+
+Quelque soit la méthode enregistrée pour une route, on sera donc capables de trouver les arguments qui doivent être passés.
+
+Nous adaptons donc la méthode `execute` de la classe `Router` afin d'analyser et injecter les paramètres adéquats ([lien](https://github.com/ld-web/sciences_u_b3_php_mvc/commit/2c4106ff130609324bc6712c7b11b3d97199817e#diff-95fd90c4e82eb78455558373d51bfb443010152c93eb52b9ff9730cff2a80c96R29)).
+
+> Nous utilisons la classe `ReflectionMethod` pour récupérer les paramètres d'une méthode et leur type
+
+Enfin, lorsque nous trouvons un paramètre, comme `EntityManager` pour notre méthode `index`, il s'agit de récupérer une instance déjà créée du gestionnaire d'entités. Nous ajoutons à la classe `Router` un attribut `params`, tableau associatif qui contiendra en tant que clé le type de paramètre, et en tant que valeur l'instance correspondante à injecter.
+
+> Note : pour appliquer le principe d'**inversion de dépendance** nous aurions également pu désigner l'interface `EntityManagerInterface` au lieu du type concret `EntityManager`. Passer par une abstraction permet de rendre plus flexible le type concret de la valeur que l'on injecte concrètement au moment de l'exécution
+
+Retrouvez la première version du routeur [ici](https://github.com/ld-web/sciences_u_b3_php_mvc/commit/2c4106ff130609324bc6712c7b11b3d97199817e#diff-95fd90c4e82eb78455558373d51bfb443010152c93eb52b9ff9730cff2a80c96).
+
+> Note : de nombreuses améliorations sont possibles dans ce routeur. Cette partie ne constitue qu'une brève introduction à l'injection de dépendances. Dans un premier temps, on pourrait refactoriser beaucoup de choses pour avoir une meilleure séparation des responsabilités. Ensuite, si vous voulez vous intéresser au principe de service container et d'injection de dépendances plus poussée, vous pouvez consulter le composant [symfony/dependency-injection](https://github.com/symfony/dependency-injection) et la documentation afférente
+
+## La vue
+
+> Pour voir l'implémentation sans moteur de template, consulter la branche [view/sans-moteur-template](https://github.com/ld-web/sciences_u_b3_php_mvc/tree/view/sans-moteur-template)
+
+Nous avons monté la couche de **Modèle** et la couche de **Contrôleurs** dans notre application.
+
+Il nous manque encore de quoi afficher les données correctement. Pour monter cette dernière couche, nous allons utiliser un moteur de template, [Twig](https://twig.symfony.com/).
+
+La documentation est assez claire pour l'installation. Ajout de la dépendance via Composer, puis adaptation du code dans `public/index.php` afin de désigner le dossier racine des templates.
+
+Nous ajouterons tout de même la recompilation du cache à chaque rafraîchissement, uniquement en mode `dev` : `'debug' => ($_ENV['APP_ENV'] === 'dev')`. On utilise la variable d'environnement `APP_ENV` comme indiqué dans la partie `Configuration`, pour avoir une configuration dynamique, en fonction de l'environnement.
+
+Avec notre petit système d'injection de dépendances implémenté plus tôt, nous pouvons donc enregistrer l'instance de Twig dans le routeur, et l'injecter dans nos contrôleurs.
+
+Mais cette dépendance peut revenir très souvent.
+
+Pour éviter de devoir la déclarer dans chaque méthode de contrôleur, nous allons remonter l'instance de Twig dans une classe parente, `AbstractController`, en tant qu'attribut protégé.
+
+Ainsi, toutes les méthodes des contrôleurs, qui seront des enfants de la classe `AbstractController`, pourront accéder à l'instance de Twig nous permettant de générer les vues.
+
+Enfin, nous enregistrerons, pour le moment, l'instance de Twig comme attribut du routeur, pour pouvoir la désigner de manière explicite lors de la construction d'un contrôleur.
+
+Nous conservons donc le mécanisme d'identification des paramètres de méthodes avec la Réflexion, mais pour la construction même de l'instance du contrôleur, nous y injecterons Twig automatiquement.
+
+## Conclusion
+
+Nous avons réalisé les trois couches du MVC jusque-là. De nombreuses améliorations et refactorisations sont possibles, pour améliorer notre codebase.
+
+Le système d'injection de dépendances peut être largement amélioré, la gestion des routes également, pour prendre en compte les paramètres dynamiques par exemple.
+
+Ceci étant dit, notre application peut également recevoir de futures briques applicatives, ou nouveaux modules, comme par exemple un gestionnaire de sessions, de formulaires, une couche de services pour les entités, etc...
