@@ -8,46 +8,34 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="users")
  */
-Class User
+class User
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+  /**
+   * @ORM\Id
+   * @ORM\Column(type="integer")
+   * @ORM\GeneratedValue(strategy="AUTO")
+   */
+  private $id;
 
-    /**
-     * @ORM\Column(type="string",length=255)
-     */
-    private $name;
+  /**
+   * @ORM\Column(type="string", length=255)
+   */
+  private $name;
 
-    /**
-     * Get the value of id
-     */ 
-    public function getId()
-    {
-        return $this->id;
-    }
+  public function getId(): int
+  {
+    return $this->id;
+  }
 
+  public function getName(): string
+  {
+    return $this->name;
+  }
 
-    /**
-     * Get the value of name
-     */ 
-    public function getName()
-    {
-        return $this->name;
-    }
+  public function setName(string $name): self
+  {
+    $this->name = $name;
 
-    /**
-     * Set the value of name
-     *
-     * @return  self
-     */ 
-    public function setName($name) : self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
+    return $this;
+  }
 }
