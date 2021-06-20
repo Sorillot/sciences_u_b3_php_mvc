@@ -15,6 +15,16 @@ Nous allons ici travailler avec l'interface web de stripe, il faudra donc efféc
   -> Se créer un compte Stripe  : https://dashboard.stripe.com/
   -> récuperer la clé secrete d'api a l'adresse suivante : https://dashboard.stripe.com/test/apikeys
   
+Chaque ajout / Fonctionnalité pourra donc etre vérifier en temps réel via  https://dashboard.stripe.com/
+afin de bien recevoir les données il faudra modifier la constante SK_API renseigner dans la page Payement.php et la remplacer par la votre :
+
+
+    require_once('/wamp64/www/SUPHP/MVC/vendor/stripe/stripe-php/init.php');
+
+    const SK_API = 'sk_test_51J4TisIYmMa000Y7CNWlQkBAfyuYmNBT1TsC6MsxWC6WBQVKs219ZhAwMb0H6nFF4NWPYYOfKO8Gf3a6YzpJLgMv00Dbs3HYv8';
+
+    class Payement{
+  
  
   
 ## Payement
