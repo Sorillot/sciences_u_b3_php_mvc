@@ -82,8 +82,9 @@ $user = $payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','ped
 $payement->CreateUtilisateurFromCreditCardAndReturnUser('4242424242424242',6,2022,'314','test','test@gmail.com');
 
 //Création d'abonnement
-$newSubscription = $payement->createSubscription('SubscriptionTest',500,'month','eur');
-var_dump($newSubscription);
+$newSubscription = $payement->createSubscription('Prenium',500,'month','eur');
+
+//abonner un utilisateur a un abonnement
 $payement->SubscribetoPlan($newSubscription->id,$user->id);
 
 
