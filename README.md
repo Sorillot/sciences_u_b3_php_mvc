@@ -24,11 +24,11 @@ A la racine de src j'ai créer une page Payement.php avec un ;
  
  j'ai ajouté les différents use : 
  
-  `
+  ```
   use Stripe;
   use Stripe\Plan;
   use Stripe\Stripe as StripeStripe;
-  `
+  ```
  
 ## Fonctionnalité
 
