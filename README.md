@@ -123,22 +123,20 @@ La création de produit est assez simpliste :
 Une fois le produit créer on peut créer un plan ( abonnement ) qui est lié a l'id de ce produit : 
 
 
-
- //permet de creér un abonnement a un produits
-    public function CreatePlan($amount,$interval,$currency,$name,$idPlan){
-        $stripe = new \Stripe\StripeClient(
-            SK_API
-          );
-          return $stripe->plans->create([
-            'amount' => $amount,
-            'interval' => $interval,
-            'currency' => $currency,
-            'product' => $idPlan,
-            'id' =>  $idPlan
-          ]);
-    }
+      //permet de creér un abonnement a un produits
+      public function CreatePlan($amount,$interval,$currency,$name,$idPlan){
+          $stripe = new \Stripe\StripeClient(
+              SK_API
+            );
+            return $stripe->plans->create([
+              'amount' => $amount,
+              'interval' => $interval,
+              'currency' => $currency,
+              'product' => $idPlan,
+              'id' =>  $idPlan
+            ]);
+      }
     
-
    
    Et grace a l'id de cet abonnement et l'id de l'utilisateur on peut ajouter un abonnement a l'utilisateur.
    
@@ -196,5 +194,6 @@ Une méthode qui permet de rapidement créer un abonnement :
 
         return $Plan;
     }
+    
     
 
