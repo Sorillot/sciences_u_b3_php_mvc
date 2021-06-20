@@ -4,12 +4,13 @@ namespace App\Controller;
 
 use Twig\Environment;
 
-abstract class AbstratController
+abstract class AbstractController
 {
-    protected $twig;
+  protected $twig;
 
-    public function __construct(Environment $twig)
-    {
-        $this->twig = $twig;
-    }
+  public function __construct(Environment $twig)
+  {
+    $this->twig = $twig;
+  }
 }
+

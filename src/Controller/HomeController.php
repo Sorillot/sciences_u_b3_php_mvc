@@ -4,9 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManager;
-use Twig\Environment;
 
-class HomeController
+class HomeController extends AbstractController
 {
   // Ici, j'ai une dépendance envers l'entity manager
   public function index(EntityManager $em)
@@ -20,11 +19,11 @@ class HomeController
     // Pour déclencher l'insertion, on doit appeler la méthode "flush" sur le gestionnaire d'entités
     $em->flush();
 
-    var_dump($user);
+    echo $this->twig->render('index.html.twig', ['user' => $user]);
   }
 
-  public function contact(Environment $twig)
+  public function contact()
   {
-    echo $twig->render('contact.html.twig', ['title' => 'Contact']);
+    echo $this->twig->render('contact.html.twig', ['title' => 'Contact']);
   }
 }
