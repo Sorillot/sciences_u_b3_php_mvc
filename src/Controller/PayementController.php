@@ -11,7 +11,7 @@ class PayementController extends AbstractController
   public function index()
   {
 
-    echo $this->twig->render('newPayement.html.twig');
+    echo $this->twig->render('Payement.html.twig');
   }
   
   //permet de créer un nouvel utilisateur
@@ -23,7 +23,8 @@ class PayementController extends AbstractController
   //faire un nouveau payement
   public function Pay()
   {
-    $this->payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','pedro@gmail.com',50000,'eur','payement');
+    $facture = $this->payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','pedro@gmail.com',50000,'eur','payement');
+    echo $this->twig->render('paid.html.twig', ['facture' => $facture]);
   }
   
   //créer un nouvel abonnement

@@ -10,6 +10,7 @@ if (php_sapi_name() !== 'cli' && preg_match('/\.(?:png|jpg|jpeg|gif|ico)$/', $_S
 
 use App\Controller\HomeController;
 use App\Controller\PayementController;
+use App\Payement;
 use App\Router;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
@@ -55,7 +56,10 @@ $twig = new Environment($loader, [
   'cache' => __DIR__ . '/../var/twig',
 ]);
 
-$router = new Router($entityManager, $twig);
+$payement = new Payement( $_ENV['STRIPE_PRIVATE_KEY']);
+
+$router = new Router($entityManager, $twig, $payement);
+
 $router->addPath(
   '/',
   'GET',
@@ -71,20 +75,25 @@ $router->addPath(
   'contact'
 );
 $router->addPath(
-  '/newpayement',
+  '/payement',
   'GET',
   'payement',
   PayementController::class,
   'index'
 );
-
-var_dump($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+$router->addPath(
+  '/pay',
+  'GET',
+  'payement',
+  PayementController::class,
+  'Pay'
+);
 
 $router->execute($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
 
 
-// $payement = new Payement( $_ENV['STRIPE_PRIVATE_KEY']);
+// 
 
 // //Création d'utilisateur + payement
 // $user = $payement->CreateUserAndPay();

@@ -12,11 +12,13 @@ class Router
   // Paramètres injectables dans les méthodes de contrôleurs
   private $params = [];
   private $twigInstance;
+  private $payementInstance;
 
-  public function __construct(EntityManager $em, Environment $twig)
+  public function __construct(EntityManager $em, Environment $twig, Payement $Payement)
   {
     $this->params[EntityManager::class] = $em;
     $this->twigInstance = $twig;
+    $this->payementInstance = $Payement;
   }
 
   public function addPath(string $path, string $httpMethod, string $name, string $class, string $method)
@@ -59,7 +61,7 @@ class Router
       }
 
       // Instanciation du contrôleur
-      $controller = new $className($this->twigInstance);
+      $controller = new $className($this->twigInstance, $this->payementInstance);
 
       // Appel de la méthode adéquate, avec le(s) paramètre(s) adéquat(s), ou aucun paramètre
       call_user_func_array(
