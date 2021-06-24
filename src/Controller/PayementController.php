@@ -6,28 +6,33 @@ use App\Payement;
 
 class PayementController extends AbstractController
 {
-  // Ici, j'ai une dépendance envers l'entity manager
+
+  //affiche l'interface de paiement
   public function index()
   {
 
     echo $this->twig->render('newPayement.html.twig');
   }
-
+  
+  //permet de créer un nouvel utilisateur
   public function CreateNewUser()
   {
     $this->payement->CreateUtilisateurFromCreditCardAndReturnUser('4242424242424242',6,2022,'314','test','test@gmail.com');
   }
-
+  
+  //faire un nouveau payement
   public function Pay()
   {
     $this->payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','pedro@gmail.com',50000,'eur','payement');
   }
-
+  
+  //créer un nouvel abonnement
   public function CreateAbonnement()
   {
     $this->payement->createSubscription('Prenium',500,'month','eur');
   }
-
+  
+  //abonne un utilisateur
   public function AbonnerUnUtilisateurAUnAbonnement($idPlan,$idUser)
   {
     $this->payementt->SubscribetoPlan($idPlan,$idUser);
