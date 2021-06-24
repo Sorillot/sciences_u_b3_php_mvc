@@ -254,7 +254,7 @@ J'ai changer les appels des méthodes pour ne pas daire d'appel de méthode stat
 
 4 - Exemple de paiement
 
-Pour développer un peu plus mon systeme j'ai ajouter un controller : PayementController avec différente function.
+Pour développer un peu plus mon systeme j'ai ajouter un controller : PayementController avec différentes fonctions.
     
 
       class PayementController extends AbstractController
@@ -293,7 +293,7 @@ Pour développer un peu plus mon systeme j'ai ajouter un controller : PayementCo
         }
       }
     
- De manière a pouvoir faire appel au module de Payement dans n'importe quel controller j'ai ajouté le paiement directement dans la Abstract Controller : 
+ De manière a pouvoir faire appel au module de paiement dans n'importe quel controller j'ai ajouté le paiement directement dans la Abstract Controller : 
  
  
     abstract class AbstractController
