@@ -250,7 +250,7 @@ Les 2 requires once était bien inutile et je les ais simplement supprimé.
 
         return $Plan;
     }
-J'ai changer les appels des méthodes pour eviter d'utiliser inutilement un appel de méthode statique
+J'ai changer les appels des méthodes pour ne pas daire d'appel de méthode statique
 
 4 - Exemple de paiement
 
