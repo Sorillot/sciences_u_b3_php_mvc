@@ -257,40 +257,41 @@ J'ai changer les appels des méthodes pour eviter d'utiliser inutilement un appe
 Pour développer un peu plus mon systeme j'ai ajouter un controller : PayementController avec différente function.
     
 
-    class PayementController extends AbstractController
-    {
-    
-      //affiche l'interface de paiement
-      public function index()
+      class PayementController extends AbstractController
       {
 
-        echo $this->twig->render('newPayement.html.twig');
+        //affiche l'interface de paiement
+        public function index()
+        {
+
+          echo $this->twig->render('Payement.html.twig');
+        }
+
+        //permet de créer un nouvel utilisateur
+        public function CreateNewUser()
+        {
+          $this->payement->CreateUtilisateurFromCreditCardAndReturnUser('4242424242424242',6,2022,'314','test','test@gmail.com');
+        }
+
+        //faire un nouveau payement
+        public function Pay()
+        {
+          $facture = $this->payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','pedro@gmail.com',50000,'eur','payement');
+          echo $this->twig->render('paid.html.twig', ['facture' => $facture]);
+        }
+
+        //créer un nouvel abonnement
+        public function CreateAbonnement()
+        {
+          $this->payement->createSubscription('Prenium',500,'month','eur');
+        }
+
+        //abonne un utilisateur
+        public function AbonnerUnUtilisateurAUnAbonnement($idPlan,$idUser)
+        {
+          $this->payementt->SubscribetoPlan($idPlan,$idUser);
+        }
       }
-      
-      //permet de créer un nouvel utilisateur
-      public function CreateNewUser()
-      {
-        $this->payement->CreateUtilisateurFromCreditCardAndReturnUser('4242424242424242',6,2022,'314','test','test@gmail.com');
-      }
-      
-      //faire un nouveau payement
-      public function Pay()
-      {
-        $this->payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','pedro@gmail.com',50000,'eur','payement');
-      }
-      
-      //créer un nouvel abonnement
-      public function CreateAbonnement()
-      {
-        $this->payement->createSubscription('Prenium',500,'month','eur');
-      }
-      
-      //abonne un utilisateur
-      public function AbonnerUnUtilisateurAUnAbonnement($idPlan,$idUser)
-      {
-        $this->payementt->SubscribetoPlan($idPlan,$idUser);
-      }
-    }
     
  De manière a pouvoir faire appel au module de Payement dans n'importe quel controller j'ai ajouté le paiement directement dans la Abstract Controller : 
  
@@ -307,24 +308,44 @@ Pour développer un peu plus mon systeme j'ai ajouter un controller : PayementCo
       }
     }
     
- J'ai créer un interface de paiement basique appelé NewPayement.html.twig 
+ Puis dans l'instanciation du controller dans le Routeur.php
  
-      {% extends 'base.html.twig' %} {% block body %}
-      <body>
-          <form id="payment-form">
-            <div id="card-element"><!--Stripe.js injects the Card Element--></div>
-            <button id="submit">
-              <div class="spinner hidden" id="spinner"></div>
-              <span id="button-text">Payer</span>
-            </button>
-            <p id="card-error" role="alert"></p>
-            <p class="result-message hidden">
-              Payement reussie
-              <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
-            </p>
-          </form>
-        </body>
+       // Instanciation du contrôleur
+      $controller = new $className($this->twigInstance, $this->payementInstance);
+    
+ J'ai créer un interface de paiement basique appelé Payement.html.twig (Pas terminé actuellement)
+ 
+      {% extends 'base.html.twig' %}
+
+    {% block body %}
+    <form action="">
+      <label>Nouveau paiement</label>
+
+
+      <label>Numéro</label>
+      <input type="text">
+      <label>Mois</label>
+      <input type="number">
+      <label>Année</label>
+      <input type="number">
+      <label>CVC</label>
+      <input type="number">
+
+    </form>
+    {% endblock %}
+      
+  Et un interface correspondant a un paiement effectué : paid.html.twig
+  
+      {% extends 'base.html.twig' %}
+
+      {% block body %}
+        <h1>Le paiement de </h1>
+        <p>
+          {{ (facture.email) }}
+          a bien été enregistré.
+        </p>
       {% endblock %}
+
       
  J'ai donc ensuite ajouté dans l'index la route pour accéder a mon paiement qui fera appel a la méthode index de mon PayementController 
  
@@ -336,4 +357,23 @@ Pour développer un peu plus mon systeme j'ai ajouter un controller : PayementCo
       'index'
     );
 
-Malheureusement ceci n'est pas fonctionnel car mon routeur ne fonctionne pas (Ou je m'y prend mal)
+et celle de l'interface d'apres paiement 
+
+    $router->addPath(
+      '/pay',
+      'GET',
+      'payement',
+      PayementController::class,
+      'Pay'
+    );
+    
+ La fonction Pay a pour but de créer un paiement pour un utilisateur et de l'envoyer dans l'interface paid afin d'y afficher différentes inforamtions 
+ 
+ 
+      public function Pay()
+    {
+      $facture = $this->payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','pedro@gmail.com',50000,'eur','payement');
+      echo $this->twig->render('paid.html.twig', ['facture' => $facture]);
+    }
+    
+ 
