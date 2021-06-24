@@ -9,6 +9,7 @@ if (php_sapi_name() !== 'cli' && preg_match('/\.(?:png|jpg|jpeg|gif|ico)$/', $_S
 }
 
 use App\Controller\HomeController;
+use App\Controller\PayementController;
 use App\Router;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
@@ -33,6 +34,9 @@ $dbParams = [
   'password' => $_ENV['DB_PASSWORD'],
   'dbname'   => $_ENV['DB_DBNAME']
 ];
+
+
+$test = $_ENV['STRIPE_PRIVATE_KEY'];
 
 $config = Setup::createAnnotationMetadataConfiguration(
   $paths,
@@ -66,5 +70,32 @@ $router->addPath(
   HomeController::class,
   'contact'
 );
+$router->addPath(
+  '/newpayement',
+  'GET',
+  'payement',
+  PayementController::class,
+  'index'
+);
+
+var_dump($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
 $router->execute($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+
+
+
+// $payement = new Payement( $_ENV['STRIPE_PRIVATE_KEY']);
+
+// //Création d'utilisateur + payement
+// $user = $payement->CreateUserAndPay();
+
+// //Création d'utilisateur sans payement
+// $payement->CreateUtilisateurFromCreditCardAndReturnUser('4242424242424242',6,2022,'314','test','test@gmail.com');
+
+// //Création d'abonnement
+// 
+
+// //abonner un utilisateur a un abonnement
+// $payement->SubscribetoPlan($newSubscription->id,$user->id);
+
+
