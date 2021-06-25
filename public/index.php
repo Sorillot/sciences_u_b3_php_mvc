@@ -2,6 +2,10 @@
 
 // Composer va installer la méthode de chargement PSR-4 auprès de PHP
 require_once __DIR__ . '/../vendor/autoload.php';
+<<<<<<< Updated upstream
+=======
+require_once __DIR__ . '/../vendor/stripe/stripe-php/init.php';
+>>>>>>> Stashed changes
 
 if (php_sapi_name() !== 'cli' && preg_match('/\.(?:png|jpg|jpeg|gif|ico)$/', $_SERVER['REQUEST_URI'])) {
   // On demande à PHP de servir le fichier demandé directement
@@ -10,6 +14,11 @@ if (php_sapi_name() !== 'cli' && preg_match('/\.(?:png|jpg|jpeg|gif|ico)$/', $_S
 
 use App\Controller\HomeController;
 use App\Router;
+<<<<<<< Updated upstream
+=======
+use App\PaymentStripe;
+use App\StripePayment;
+>>>>>>> Stashed changes
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Dotenv\Dotenv;
@@ -59,6 +68,7 @@ $router->addPath(
   HomeController::class,
   'index'
 );
+
 $router->addPath(
   '/contact',
   'GET',
@@ -67,4 +77,25 @@ $router->addPath(
   'contact'
 );
 
+<<<<<<< Updated upstream
 $router->execute($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+=======
+
+$router->execute($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+
+$payement = new PaymentStripe();
+
+//Création d'utilisateur + payement
+$user = $payement->CreateUserAndPay('4242424242424242',6,2022,'314','pedro','pedro@gmail.com',50000,'eur','payement');
+
+//Création d'utilisateur sans payement
+$payement->CreateUtilisateurFromCreditCardAndReturnUser('4242424242424242',6,2022,'314','test','test@gmail.com');
+
+//Création d'abonnement
+$newSubscription = $payement->createSubscription('Prenium',500,'month','eur');
+
+//abonner un utilisateur a un abonnement
+$payement->SubscribetoPlan($newSubscription->id,$user->id);
+
+
+>>>>>>> Stashed changes
